@@ -11,6 +11,7 @@ let spaceCounter = 0
 const spaceCounterIncrementer = 2;
 const whiteSpace = " ";
 
+// TODO: 6. Add a method or function to traverse our DOM and return the first element by selector
 export class Tag implements ITag {
   name: string;
   class: string[] = [];
@@ -24,6 +25,8 @@ export class Tag implements ITag {
     const openingTag = `<${this.name}${this.populateClasses()}>`;
     const closingTag = `</${this.name}>`;
     const children = `${this.populateChildren()}`;
+
+    if (this.children.length === 0) { }
 
     const tag =
       "\n" +

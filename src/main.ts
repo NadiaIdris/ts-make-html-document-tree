@@ -1,77 +1,108 @@
-interface ITag {
-  name: string;
-  class: string[];
-  children: ITag[];
+// Named class MyElement instead of Element because Element is already defined in lib.dom.d.ts.
+export interface MyElementInterface {
+  tagName: string;
+  addClass: (className: string) => MyElement;
+  appendChild: (child: MyElement) => MyElement;
   printTree: () => string;
-  addClass: (className: string) => void;
-  appendChild: (child: ITag) => void;
+  /** Takes a tuple of parentSelector and then the childSelector we are looking for in the parentSelector subtree. Returns the first element which has this selector.*/
+  querySelector: ([parentSelector, childSelector]: string[]) => MyElement;
 }
 
-let spaceCounter = 0
-const spaceCounterIncrementer = 2;
-const whiteSpace = " ";
-
-// TODO: 6. Add a method or function to traverse our DOM and return the first element by selector
-export class Tag implements ITag {
-  name: string;
-  class: string[] = [];
-  children: ITag[] = [];
+class MyElement implements MyElementInterface {
+  tagName: string;
+  private _children: MyElement[] = [];
+  private _classList: string[] = [];
+  // We need dept property. For each when adding a child to a parent, we need to increment the dept of the child by 1. This is how we will know how many spaces to add before the child element.
+  private _depth: number = 0;
 
   constructor(tagName: string) {
-    this.name = tagName;
+    this.tagName = tagName;
   }
 
+  addClass = (className: string): MyElement => {
+    this._classList.push(className);
+    return this;
+  };
+
+  appendChild = (child: MyElement) => {
+    // Increment the dept of the child by taking the current element's depth and adding 1 to it.
+    child._depth = this._depth + 1;
+    this._children.push(child);
+    return this;
+  };
+
+
+  querySelector = ([parentSelector, childSelector]: string[]): MyElement => {
+    return this;
+  };
+
   printTree = (): string => {
-    const openingTag = `<${this.name}${this.populateClasses()}>`;
-    const closingTag = `</${this.name}>`;
-    const children = `${this.populateChildren()}`;
+    let spaces = " ".repeat(this._depth * 2);
+    const elementHasChildren = this._children.length > 0;
+    const hasClasses = this._classList.length > 0;
+    const classes = hasClasses ? ` class="${this._classList.join(" ")}"` : "";
+    let string: string = "";
 
-    if (this.children.length === 0) { }
-
-    const tag =
-      "\n" +
-      whiteSpace.repeat(spaceCounter) +
-      openingTag +
-      children +
-      "\n" +
-      whiteSpace.repeat(spaceCounter) +
-      closingTag;
-
-    return tag;
-  };
-
-  addClass = (classToAdd: string): void => {
-    this.class.push(classToAdd);
-  };
-
-  appendChild = (childTag: ITag): void => {
-    this.children.push(childTag);
-  };
-
-  private populateClasses = () => {
-    if (this.hasClasses()) {
-      let classesString = ` class="`;
-      this.class.forEach((oneClass, index) => {
-        const lastClass = index === this.class.length - 1;
-        if (lastClass) return (classesString += `${oneClass}`);
-        return (classesString += `${oneClass} `);
-      });
-      return `${classesString}"`;
+    if (elementHasChildren) {
+      const children = this._children.map(child => child.printTree()).join("");
+      // Print start and end tag to different lines.
+      string = `${spaces}<${this.tagName}${classes}>\n${children}${spaces}</${this.tagName}>\n`;
+    } else {
+      // Print start and end tag to the same line.
+      string = `${spaces}<${this.tagName}${classes}></${this.tagName}>\n`;
     }
-    return "";
-  };
-
-  private populateChildren = (): string => {
-    let childrenString: string = ``;
-    this.children.forEach((child) => {
-      spaceCounter += spaceCounterIncrementer;
-      childrenString += `${child.printTree()}`;
-      spaceCounter -= spaceCounterIncrementer;
-    });
-    return childrenString;
-  };
-
-  private hasClasses = (): boolean => {
-    return this.class.length > 0;
+    return string;
   };
 }
+
+export default MyElement;
+
+/* ------------------------------------
+Test case 1 - should print the following:
+
+ <html class="blue-theme">
+   <body>
+     <div></div>
+   </body>
+ </html>
+
+Uncomment the code below to run the test case.
+*/
+
+// const html = new MyElement("html");
+// const body = new MyElement("body");
+// const div = new MyElement("div");
+// html.appendChild(body);
+// body.appendChild(div);
+// console.log(html.printTree());
+
+/* ------------------------------------
+Test case 2 - should print the following: 
+
+ <html>
+   <body>
+      <div class="main-content">
+        <span class="some-other-content"></span>
+        <p class="some-other-content">
+      </div>
+   </body>
+ </html>
+
+ Uncomment the code below to run the test case.
+*/
+
+const html = new MyElement("html");
+const body = new MyElement("body");
+const div = new MyElement("div");
+html.appendChild(body);
+body.appendChild(div);
+div.addClass("main-content");
+const span = new MyElement("span");
+span.addClass("some-other-content");
+div.appendChild(span);
+const p = new MyElement("p");
+p.addClass("some-other-content");
+div.appendChild(p);
+const div2 = new MyElement("div");
+body.appendChild(div2);
+console.log(html.printTree())

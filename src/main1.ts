@@ -60,6 +60,7 @@ class MyElement implements MyElementInterface {
   tagName: string;
   private _children: MyElement[] = [];
   private _classList: string[] = [];
+  private _depth: number = 0;
 
   constructor(tagName: string) {
     this.tagName = tagName;
@@ -71,6 +72,7 @@ class MyElement implements MyElementInterface {
   };
 
   appendChild = (child: MyElement) => {
+    child._depth = this._depth + 1;
     this._children.push(child);
     return this;
   };
@@ -81,7 +83,7 @@ class MyElement implements MyElementInterface {
   };
 
   toString = (): string => {
-    let spaces = " ".repeat((spaceCounter += 2));
+    let spaces = " ".repeat((this._depth * 2));
     const elementHasChildren = this._children.length > 0;
     const elementHasNoChildren = !elementHasChildren;
     const elementHasClasses = this._classList.length > 0;
@@ -105,7 +107,7 @@ class MyElement implements MyElementInterface {
 
 export default MyElement;
 
-// // Test cases: 1.
+// Test cases: 1.
 // const html = new MyElement("html");
 // const body = new MyElement("body");
 // const div = new MyElement("div");
@@ -126,4 +128,7 @@ div.appendChild(span);
 const p = new MyElement("p");
 p.addClass("some-other-content");
 div.appendChild(p);
-console.log(html.toString());
+const div2 = new MyElement("div");
+body.appendChild(div2);
+html.toString()
+

@@ -1,3 +1,27 @@
+# Print HTML tree
+
+Design and implement a class (or other data structure) that can represent a single HTML element and its children. The class should have the following methods:
+
+- `addClass` - takes a class name and adds it to the element's list of classes
+- `toString` - returns a string representation of the element and its children in HTML format
+- `appendChild` - takes an HTML element and adds it to the element's list of children
+- `querySelector` - takes an array of two elements (tuple), both CSS selectors. First selector is the parent element's selector to start searching from and then second element is the element that we are looking for that has this selecor. The method returns the first element that matches the selector.
+
+Other methods you could implement if you'd like:
+
+- `removeClass` - takes a class name and removes it from the element's list of classes
+- `getClasses` - returns an array of the element's classes
+- `removeChild` - takes an HTML element and removes it from the element's list of children
+
+## Run app
+
+- In your termainal, go to the root directory of the project and run the following command: `npm install && npm start`
+
+## Run tests
+
+- Run all tests continuously: `npx jest --watchAll`
+- Run all tests once: `npm jest`
+
 # HTML Tag Exercise
 
 In this exercise you'll implement a class or data structure to represent HTML tags, their attributes, and the hierarchical structure of an HTML document.
@@ -44,7 +68,7 @@ body_tag.append_child(div_tag)
 puts tag
 ```
 
-5. Implement pretty-printing for the HTML output.  The output should have reasonable indentation and newlines.
+5. Implement pretty-printing for the HTML output. The output should have reasonable indentation and newlines.
 
 ```ruby
 # should print:

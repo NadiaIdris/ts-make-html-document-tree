@@ -39,7 +39,6 @@ import MyElement from "../main";
 //   ).toBe(result);
 // });
 
-
 test("querySelector test 2 works", () => {
   /*
    Make this tree:
@@ -80,13 +79,13 @@ test("querySelector test 2 works", () => {
   console.log(html.printTree());
 
   const depth =
-    html.querySelector(["main-content", "some-other-content"])?.depth || 0;
+    html.querySelectorBFS(["main-content", "some-other-content"])?.depth || 0;
   const spaceCount = depth * 2;
   const result = `${" ".repeat(
     spaceCount
   )}<span class="some-other-content"></span>\n`;
 
   expect(
-    html.querySelector(["main-content", "some-other-content"])?.printTree()
+    html.querySelectorBFS(["main-content", "some-other-content"])?.printTree()
   ).toBe(result);
 });

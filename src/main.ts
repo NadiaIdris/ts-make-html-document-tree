@@ -6,7 +6,11 @@ export interface MyElementInterface {
   appendChild: (child: MyElement) => MyElement;
   printTree: () => string;
   /** Takes a tuple of parentSelector and then the childSelector we are looking for in the parentSelector subtree. Returns the first element which has this selector.*/
-  querySelector: ([
+  querySelectorBFS: ([
+    parentSelector,
+    childSelector,
+  ]: string[]) => MyElement | null;
+  querySelectorDFS: ([
     parentSelector,
     childSelector,
   ]: string[]) => MyElement | null;
@@ -37,41 +41,62 @@ class MyElement implements MyElementInterface {
     return this;
   };
 
-  querySelector = ([
+  /** Function which takes an element and checks if the element parent has the parentSelector class and does the current element has the child class. If both are true, returns the currentElement.*/
+  private _checkForSelectors = (
+    currentElement: MyElement,
+    [parentSelector, childSelector]: string[]
+  ): MyElement | undefined => {
+    // Early return if current element is the root element.
+    if (currentElement._parentElement === undefined) return;
+
+    const foundChildSelector = currentElement?._classList.has(childSelector);
+    const foundParentSelector =
+      currentElement._parentElement?._classList.has(parentSelector);
+
+    if (foundParentSelector && foundChildSelector) return currentElement;
+  };
+
+  querySelectorBFS = ([
     parentSelector,
     childSelector,
   ]: string[]): MyElement | null => {
     const queue: MyElement[] = [this];
     let currentElement: MyElement;
 
-    // Function which takes a class selector and if the current element has that class, then return the current element.
-    const checkForSelectors = (
-      currentElement: MyElement
-    ): MyElement | undefined => {
-      // Early return if current element is the root element.
-      if (currentElement._parentElement === undefined) return;
-
-      const foundSelector = currentElement?._classList.has(childSelector);
-      const foundParentSelector =
-        currentElement._parentElement?._classList.has(parentSelector);
-
-      if (foundParentSelector && foundSelector) {
-        return currentElement;
-      }
-    };
-
     while (queue.length > 0) {
       // Take the first element from the queue.
       currentElement = queue.shift() as MyElement;
-      // Check if currentElement has the parentSelector class.
-      const selectorFound = checkForSelectors(currentElement!);
+
+      const selectorFound = this._checkForSelectors(currentElement!, [
+        parentSelector,
+        childSelector,
+      ]);
       // If found the selector we were looking for, return it.
-      if (selectorFound !== undefined) {
-        return selectorFound;
-      }
-      // If couldn't find a match, pass all the child elements to the queue.
+      if (selectorFound !== undefined) return selectorFound;
+
+      // If couldn't find the selector, pass all the child elements to the queue.
       currentElement?._children.forEach((child) => {
         queue.push(child);
+      });
+    }
+
+    return null;
+  };
+
+  querySelectorDFS = ([parentSelector, childSelector]: string[]): MyElement | null => {
+    const stack: MyElement[] = [this];
+    let currentElement: MyElement;
+
+    while (stack.length > 0) {
+      currentElement = stack.pop() as MyElement;
+      const selectorFound = this._checkForSelectors(currentElement!, [
+        parentSelector,
+        childSelector,
+      ]);
+      if (selectorFound !== undefined) return selectorFound;
+
+      currentElement?._children.forEach((child) => {
+        stack.push(child);
       });
     }
 

@@ -121,19 +121,42 @@ printTree = (): string => {
 };
 ```
 
-6. Add a method or function to traverse our DOM and return the first element by selector
+## Traversing the tree
 
-```ruby
-# Assume that we've built up this tag heirarchy:
-# <html>
-#   <body>
-#      <div class="main-content">
-#        <span class="some-other-content"></span>
-#        <p class="some-other-content">
-#      </div>
-#   </body>
-# </html>
+### Task
+Implement a method called `querySelector`, which takes an array of two selectors (tuple). The first selector is the parent element's selector. When you find the parent element (it has the first selector in the array), then it ithe parent element's subtree, continue travering the subtree to find the next element that has the second selector in the array. The method returns the first element that matches the selector.
 
-# should print '<span class="some-other-content"></span>'
-puts tag.query_selector(['main-content', 'some-other-content']).to_s
+Method signature:
+
+Note: find the immediate child.
+
+```ts
+querySelector: ([parentSelector, childSelector]: string[]) => MyElement | null;
 ```
+
+Assume that we've built up this element hierarchy:
+```
+ <html>
+   <body>
+      <div class="main-content">
+        <span></span>
+      </div>
+      <div class="main-content">
+        <span class="another-class some-other-content"></span> // 👍 This is the element we are looking for.
+        <p class="some-other-content">
+      </div>
+   </body>
+ </html>
+```
+```ts
+html.querySelector(['main-content', 'some-other-content']).printTree()
+```
+The above method call should return `<span class="some-other-content"></span>`
+
+
+### Breath first search (BFS)
+
+We are going to use BFS to traverse the HTML tree. You can also implement a solution using Depth first search (DFS).
+
+1. We want to use queue (first in first out - FIFO) to keep track of the elements that we need to visit. We start by adding the root element (this) to the queue.
+2. Second thing that BFS always has is some kind of a loop. We are going to use while loop. While the queue is not empty (we still have elements to check), we want to keep looping. Inside the while loop we remove the first element of the queue

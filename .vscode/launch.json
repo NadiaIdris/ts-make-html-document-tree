@@ -1,0 +1,11 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "command": "npx jest",
+      "name": "Debug all my tests",
+      "request": "launch",
+      "type": "node-terminal"
+    }
+  ]
+}

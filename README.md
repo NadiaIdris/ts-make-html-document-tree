@@ -38,10 +38,11 @@ Depth-first search
 Breath-first search
 ![](/readme-images/breath-first-search.svg)
 
+# Implementation
 
 ## Data modeling
 
-We want to see this at the end. This is a formatted string.
+The program that we write should produce the following output (which is a string):
 
 ```html
 "

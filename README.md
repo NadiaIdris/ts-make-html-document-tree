@@ -29,11 +29,15 @@ The difference between finding the first child vs finding a descendant element.
 
 ![](/readme-images/find-first-child-find-first-descendant.svg)
 
-Breath-first search
-![](/readme-images/breath-first-search.svg)
+Depth-first search (HTML tree)
+![](/readme-images/html-tree-depth-first-search.svg)
 
 Depth-first search
 ![](/readme-images/depth-first-search.svg)
+
+Breath-first search
+![](/readme-images/breath-first-search.svg)
+
 
 ## Data modeling
 

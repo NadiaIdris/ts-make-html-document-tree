@@ -44,7 +44,7 @@ Let's walk through our thought process on the journey to solving this task.
 
 ## Data modeling
 
-The program that we write should produce the following output (which is a string):
+Let's start w/ the output first. Our program should produce the following output (which is a string):
 
 ```html
 "

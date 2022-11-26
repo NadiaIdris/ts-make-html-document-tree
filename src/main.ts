@@ -6,13 +6,21 @@ export interface MyElementInterface {
   appendChild: (child: MyElement) => MyElement;
   printTree: () => string;
   /** Takes a tuple of parentSelector and then the childSelector we are looking for in the parentSelector subtree. Returns the first element which has this selector.*/
-  querySelectorBFS: ([
+  findFirstChildBFS: ([
     parentSelector,
     childSelector,
   ]: string[]) => MyElement | null;
-  querySelectorDFS: ([
+  findFirstChildDFS: ([
     parentSelector,
     childSelector,
+  ]: string[]) => MyElement | null;
+  findDescendantBFS: ([
+    parentSelector,
+    decendantSelector,
+  ]: string[]) => MyElement | null;
+  findDescendantDFS: ([
+    parentSelector,
+    decendantSelector,
   ]: string[]) => MyElement | null;
 }
 
@@ -56,7 +64,7 @@ class MyElement implements MyElementInterface {
     if (foundParentSelector && foundChildSelector) return currentElement;
   };
 
-  querySelectorBFS = ([
+  findFirstChildBFS = ([
     parentSelector,
     childSelector,
   ]: string[]): MyElement | null => {
@@ -83,7 +91,10 @@ class MyElement implements MyElementInterface {
     return null;
   };
 
-  querySelectorDFS = ([parentSelector, childSelector]: string[]): MyElement | null => {
+  findFirstChildDFS = ([
+    parentSelector,
+    childSelector,
+  ]: string[]): MyElement | null => {
     const stack: MyElement[] = [this];
     let currentElement: MyElement;
 
@@ -103,6 +114,101 @@ class MyElement implements MyElementInterface {
     return null;
   };
 
+  private _checkForChildAndParentSelectors = (
+    currentElement: MyElement,
+    [parentSelector, decendantSelector]: string[]
+  ): MyElement | undefined => {
+    // This function needs to assign an element to the childToReturn variable.
+
+    // Check for decendantSelector.
+    if (currentElement._classList.has(decendantSelector)) {
+      // Start walking up the tree to find the parent.
+      const foundParent = this._walkUpTheTreeToFindParent(
+        currentElement,
+        parentSelector
+      );
+      if (foundParent === "foundParent") return currentElement;
+    }
+  };
+
+  private _walkUpTheTreeToFindParent = (
+    currentElement: MyElement,
+    parentSelector: string
+  ): "foundParent" | "didNotFindParent" => {
+    while (currentElement._parentElement !== undefined) {
+      if (currentElement._parentElement?._classList.has(parentSelector)) {
+        return "foundParent";
+      }
+      currentElement = currentElement._parentElement;
+    }
+    return "didNotFindParent";
+  };
+
+  findDescendantBFS = ([
+    parentSelector,
+    decendantSelector,
+  ]: string[]): MyElement | null => {
+    const queue: MyElement[] = [this];
+    let currentElement: MyElement;
+
+    while (queue.length > 0) {
+      currentElement = queue.shift() as MyElement;
+      const foundChildElementWithMatchingParent =
+        this._checkForChildAndParentSelectors(currentElement, [
+          parentSelector,
+          decendantSelector,
+        ]);
+
+      if (foundChildElementWithMatchingParent !== undefined)
+        return currentElement;
+
+      currentElement?._children.forEach((child) => {
+        queue.push(child);
+      });
+    }
+    return null;
+  };
+
+  findDescendantDFS = ([parentSelector, decendantSelector]: string[]) => {
+    const stack: MyElement[] = [this];
+    let currentElement: MyElement;
+
+    while (stack.length > 0) {
+      currentElement = stack.pop() as MyElement;
+      // Call a function, check if element has some condition. If it does, return the element
+      // const foundChildElementWithMatchingParent =
+      //   this._checkForChildAndParentSelectors(currentElement, [
+      //     parentSelector,
+      //     decendantSelector,
+      //   ]);
+
+      // if (foundChildElementWithMatchingParent !== undefined)
+      //   return currentElement;
+
+      console.log(currentElement.tagName);
+      currentElement._children.forEach((child) => stack.push(child));
+    }
+
+    return null
+  };
+  /*
+   Make this tree:
+    <body class="main-content">
+      <div>
+        <p class="some-other-content">
+          <span></span>
+        </p>
+        <code></code>
+      </div>
+      <section></section>
+      <ul>
+        <li>
+          <a></a>
+          <button></button>
+        </li>
+      </ul>
+    </body>
+   */
   printTree = (): string => {
     let spaces = " ".repeat(this.depth * 2);
     const elementHasChildren = this._children.length > 0;

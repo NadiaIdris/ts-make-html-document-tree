@@ -1,4 +1,4 @@
-# Pretty print HTML tree
+# Pretty print and traverse an HTML tree
 
 ![](/readme-images/pretty-print-html.svg)
 

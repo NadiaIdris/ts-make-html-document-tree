@@ -25,17 +25,17 @@ The class should also have the following methods for tree traversal:
 - `findDescendantBFS` - this method also takes a tuple, except the first element is the ancestor selector and the second element is the descendant selector. We traverse the tree using a breadth-first search algorithm. If we find the first descendant element that has the selector, we return the descendant element. We traverse the tree using BFS.
 - `findDescendantDFS` - same as the `findDescendantBFS` method, except we traverse the tree using DFS.
 
-The difference between finding the first child vs finding a descendant element.
+The following image shows the difference between finding the first child vs finding a descendant element.
 
 ![](/readme-images/find-first-child-find-first-descendant.svg)
 
-Depth-first search (HTML tree)
+The following image shows the depth-first search (HTML tree)
 ![](/readme-images/html-tree-depth-first-search.svg)
 
-Depth-first search
+The following image shows the depth-first search
 ![](/readme-images/depth-first-search.svg)
 
-Breath-first search
+The following image shows the breath-first search
 ![](/readme-images/breath-first-search.svg)
 
 # Implementation

@@ -156,7 +156,7 @@ Implement
 - `findDescendantBFS`
 - `findDescendantDFS`
 
-Check out `main.ts` for how to implement those methods.
+Check out [`main.ts`](https://github.com/NadiaIdris/ts-make-html-document-tree/blob/main/src/main.ts#L74) for how to implement those methods.
 
 ## Queue
 

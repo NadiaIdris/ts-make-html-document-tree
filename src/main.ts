@@ -15,11 +15,11 @@ export interface MyElementInterface {
     childSelector,
   ]: string[]) => MyElement | null;
   findDescendantBFS: ([
-    parentSelector,
+    ancestorSelector,
     decendantSelector,
   ]: string[]) => MyElement | null;
   findDescendantDFS: ([
-    parentSelector,
+    ancestorSelector,
     decendantSelector,
   ]: string[]) => MyElement | null;
 }
@@ -49,19 +49,26 @@ class MyElement implements MyElementInterface {
     return this;
   };
 
-  /** Function which takes an element and checks if the element parent has the parentSelector class and does the current element has the child class. If both are true, returns the currentElement.*/
-  private _checkForSelectors = (
-    currentElement: MyElement,
-    [parentSelector, childSelector]: string[]
-  ): MyElement | undefined => {
-    // Early return if current element is the root element.
-    if (currentElement._parentElement === undefined) return;
+  printTree = (): string => {
+    let spaces = " ".repeat(this.depth * 2);
+    const elementHasChildren = this._children.length > 0;
+    const hasClasses = this._classList.size > 0;
+    const classes = hasClasses
+      ? ` class="${[...this._classList].join(" ")}"`
+      : "";
+    let string: string = "";
 
-    const foundChildSelector = currentElement?._classList.has(childSelector);
-    const foundParentSelector =
-      currentElement._parentElement?._classList.has(parentSelector);
-
-    if (foundParentSelector && foundChildSelector) return currentElement;
+    if (elementHasChildren) {
+      const children = this._children
+        .map((child) => child.printTree())
+        .join("");
+      // Print start and end tag to different lines.
+      string = `${spaces}<${this.tagName}${classes}>\n${children}${spaces}</${this.tagName}>\n`;
+    } else {
+      // Print start and end tag to the same line.
+      string = `${spaces}<${this.tagName}${classes}></${this.tagName}>\n`;
+    }
+    return string;
   };
 
   findFirstChildBFS = ([
@@ -106,6 +113,11 @@ class MyElement implements MyElementInterface {
       ]);
       if (selectorFound !== undefined) return selectorFound;
 
+      // When using a stack (DFS): if we iterate over children array and add each child from the first
+      // to last to the stack, then in the next while loop iteration we grab the last element of the stack.
+      // This means we are checking the last child element first instead the first child that got added to
+      // the stack (we are traversing the tree from left to right). If you want to traverse the tree from
+      // the right to left instead, use for loop below and iterate over the children from last to first.
       currentElement?._children.forEach((child) => {
         stack.push(child);
       });
@@ -114,52 +126,38 @@ class MyElement implements MyElementInterface {
     return null;
   };
 
-  private _checkForChildAndParentSelectors = (
+  /** Function which takes an element and checks if the element parent has the parentSelector class and also checks does the current element has the child class. If both are true, returns the currentElement.*/
+  private _checkForSelectors = (
     currentElement: MyElement,
-    [parentSelector, decendantSelector]: string[]
+    [parentSelector, childSelector]: string[]
   ): MyElement | undefined => {
-    // This function needs to assign an element to the childToReturn variable.
+    // Early return if current element is the root element.
+    if (currentElement._parentElement === undefined) return;
 
-    // Check for decendantSelector.
-    if (currentElement._classList.has(decendantSelector)) {
-      // Start walking up the tree to find the parent.
-      const foundParent = this._walkUpTheTreeToFindParent(
-        currentElement,
-        parentSelector
-      );
-      if (foundParent === "foundParent") return currentElement;
-    }
-  };
+    const foundChildSelector = currentElement?._classList.has(childSelector);
+    const foundParentSelector =
+      currentElement._parentElement?._classList.has(parentSelector);
 
-  private _walkUpTheTreeToFindParent = (
-    currentElement: MyElement,
-    parentSelector: string
-  ): "foundParent" | "didNotFindParent" => {
-    while (currentElement._parentElement !== undefined) {
-      if (currentElement._parentElement?._classList.has(parentSelector)) {
-        return "foundParent";
-      }
-      currentElement = currentElement._parentElement;
-    }
-    return "didNotFindParent";
+    if (foundParentSelector && foundChildSelector) return currentElement;
   };
 
   findDescendantBFS = ([
-    parentSelector,
-    decendantSelector,
+    ancestorSelector,
+    descendantSelector,
   ]: string[]): MyElement | null => {
     const queue: MyElement[] = [this];
     let currentElement: MyElement;
 
     while (queue.length > 0) {
       currentElement = queue.shift() as MyElement;
-      const foundChildElementWithMatchingParent =
+      // Call a function, check if element has some condition. If it does, return the element.
+      const foundDescendantElementWithMatchingAncestor =
         this._checkForChildAndParentSelectors(currentElement, [
-          parentSelector,
-          decendantSelector,
+          ancestorSelector,
+          descendantSelector,
         ]);
 
-      if (foundChildElementWithMatchingParent !== undefined)
+      if (foundDescendantElementWithMatchingAncestor !== undefined)
         return currentElement;
 
       currentElement?._children.forEach((child) => {
@@ -169,72 +167,70 @@ class MyElement implements MyElementInterface {
     return null;
   };
 
-  findDescendantDFS = ([parentSelector, decendantSelector]: string[]) => {
+  findDescendantDFS = ([ancestorSelector, descendantSelector]: string[]) => {
     const stack: MyElement[] = [this];
     let currentElement: MyElement;
 
     while (stack.length > 0) {
       currentElement = stack.pop() as MyElement;
-      // Call a function, check if element has some condition. If it does, return the element
-      // const foundChildElementWithMatchingParent =
-      //   this._checkForChildAndParentSelectors(currentElement, [
-      //     parentSelector,
-      //     decendantSelector,
-      //   ]);
+      // Call a function, check if element has some condition. If it does, return the element.
+      const foundDescendantElementWithMatchingAncestor =
+        this._checkForChildAndParentSelectors(currentElement, [
+          ancestorSelector,
+          descendantSelector,
+        ]);
 
-      // if (foundChildElementWithMatchingParent !== undefined)
-      //   return currentElement;
+      if (foundDescendantElementWithMatchingAncestor !== undefined)
+        return currentElement;
 
-      console.log(currentElement.tagName);
+      // When using a stack (DFS): if we iterate over children array and add each child from the first
+      // to last to the stack, then in the next while loop iteration we grab the last element of the stack.
+      // This means we are checking the last child element first instead the first child that got added to
+      // the stack (we are traversing the tree from left to right). If you want to traverse the tree from
+      // the right to left instead, use for loop below and iterate over the children from last to first.
       currentElement._children.forEach((child) => stack.push(child));
     }
 
-    return null
+    return null;
   };
-  /*
-   Make this tree:
-    <body class="main-content">
-      <div>
-        <p class="some-other-content">
-          <span></span>
-        </p>
-        <code></code>
-      </div>
-      <section></section>
-      <ul>
-        <li>
-          <a></a>
-          <button></button>
-        </li>
-      </ul>
-    </body>
-   */
-  printTree = (): string => {
-    let spaces = " ".repeat(this.depth * 2);
-    const elementHasChildren = this._children.length > 0;
-    const hasClasses = this._classList.size > 0;
-    const classes = hasClasses
-      ? ` class="${[...this._classList].join(" ")}"`
-      : "";
-    let string: string = "";
 
-    if (elementHasChildren) {
-      const children = this._children
-        .map((child) => child.printTree())
-        .join("");
-      // Print start and end tag to different lines.
-      string = `${spaces}<${this.tagName}${classes}>\n${children}${spaces}</${this.tagName}>\n`;
-    } else {
-      // Print start and end tag to the same line.
-      string = `${spaces}<${this.tagName}${classes}></${this.tagName}>\n`;
+  private _checkForChildAndParentSelectors = (
+    currentElement: MyElement,
+    [ancestorSelector, descendantSelector]: string[]
+  ): MyElement | undefined => {
+    // Check for descendantSelector.
+    if (currentElement._classList.has(descendantSelector)) {
+      // Start walking up the tree to find the ancestor.
+      const foundAncestor = this._walkUpTheTreeToFindParent(
+        currentElement,
+        ancestorSelector
+      );
+      if (foundAncestor === "foundAncestor") return currentElement;
     }
-    return string;
+  };
+
+  private _walkUpTheTreeToFindParent = (
+    currentElement: MyElement,
+    ancestorSelector: string
+  ): "foundAncestor" | "didNotFindAncestor" => {
+    while (currentElement._parentElement !== undefined) {
+      if (currentElement._parentElement?._classList.has(ancestorSelector)) {
+        return "foundAncestor";
+      }
+      currentElement = currentElement._parentElement;
+    }
+    return "didNotFindAncestor";
   };
 }
 
 export default MyElement;
 
 /* ------------------------------------
+
+For quick testing you can create a tree below and call console.log(element.printTree()) to see the tree.
+For jest testing, check out "main.test.ts" file. To run jest tests continuously, run "npx jest --watchAll".
+
+--------------------------------------
 Test case 1 - should print the following:
 
  <html class="blue-theme">

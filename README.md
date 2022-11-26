@@ -4,11 +4,13 @@
 
 ## Run app
 
-- In your terminal, go to the root directory of the project and run the following command: `npm install && npm start`
+- In your terminal, go to the root directory of the project and run the following command `npm install` to install dependencies.
 
 ## Test
 
-I have written some sample tests for the app at the bottom of the `main.ts` file. Just uncomment the tests you want to run.
+Testing quickly: I have written some sample tests for the app at the bottom of the `main.ts` file. Just uncomment the tests you want to run.
+
+Testing with Jest: I have written some tests for the app in the `main.test.ts` file. To run jest tests continuously, run "npx jest --watchAll".
 
 ## Task
 
@@ -17,13 +19,23 @@ Design and implement a class that can represent a single HTML element and its ch
 - `addClass` - takes a class name and adds it to the element's list of classes
 - `printTree` - returns a string representation of the element and its children in HTML format
 - `appendChild` - takes an HTML element and adds it to the element's list of children
-- `querySelector` - takes an array of two elements (tuple), both CSS selectors. The first selector is the parent element's selector to start searching from and then the second element is the element that we are looking for that has this selector. The method returns the first element that matches the selector.
 
-Other methods you could implement if you'd like:
+Tree traversal methods:
 
-- `removeClass` - takes a class name and removes it from the element's list of classes
-- `getClasses` - returns an array of the element's classes
-- `removeChild` - takes an HTML element and removes it from the element's list of children
+- `findFirstChildBFS` - method which takes an array of two elements (tuple). The first element is a parent element selector to start searching the child selector from. The second element is the child selector. If we find the first child element that has the selector, we return the child element. The BFS stands for Breadth First Search. This simply defines the order we traverse the tree.
+- `findFirstChildDFS` - basically the same as the BFS method, but the DFS stands for Depth First Search. We traverse the tree using a depth first search algorithm. If you are not familiar with the difference between BFS and DFS, I have added two images below this section.
+- `findDescendantBFS` - this method also takes a tuple, except the first element is the ancestor selector and the second element is the descendant selector. We traverse the tree using a breadth first search algorithm. If we find the first descendant element that has the selector, we return the descendant element. We traverse the tree using BFS.
+- `findDescendantDFS` - same as above method, except we traverse the tree using DFS.
+
+The difference between finding the first child vs finding a descendant element.
+
+![](/readme-images/find-first-child-find-first-descendant.svg)
+
+Breath first search
+![](/readme-images/breath-first-search.svg)
+
+Depth first search
+![](/readme-images/depth-first-search.svg)
 
 ## Data modeling
 
@@ -69,16 +81,11 @@ class MyElement implements MyElementInterface {
 }
 ```
 
+Note: when using classes, one doesn't have to create an interface. I like to do that, so it's easy to read which properties and methods are public and which are private.
+
 ## Create an element
 
 - Instantiate `MyElement` class using a constructor function: `new Element(element: string) => Element`
-
-## Methods we need to create an html tree
-
-- `addClass` - takes a class name and adds it to the element's list of classes
-- `printTree` - returns a string representation of the element and its children in HTML format
-- `appendChild` - takes an HTML element and adds it to the element's list of children
-- `querySelector` - takes an array of two elements (tuple), both CSS selectors. The first selector is the parent element's selector to start searching from and then the second element is the element that we are looking for that has this selector. The method returns the first element that matches the selector.
 
 ## Formatting the HTML tree
 
@@ -93,7 +100,9 @@ E.g. when we pretty print the HTML tree, each element will have depth \* 2 space
 ```ts
 appendChild = (child: MyElement) => {
   // Increment the dept of the child by taking the current element's depth and adding 1 to it.
-  child._depth = this._depth + 1;
+  child.depth = this.depth + 1;
+  // We are also tracking the parent element of each element. This will help us to traverse to the root element.
+  child._parentElement = this;
   this._children.push(child);
   return this;
 };
@@ -103,18 +112,20 @@ Method to print the HTML tree:
 
 ```ts
 printTree = (): string => {
-  let spaces = " ".repeat(this._depth * 2);
+  let spaces = " ".repeat(this.depth * 2);
   const elementHasChildren = this._children.length > 0;
-  const hasClasses = this._classList.length > 0;
-  const classes = hasClasses ? ` class="${this._classList.join(" ")}"` : "";
+  const hasClasses = this._classList.size > 0;
+  const classes = hasClasses
+    ? ` class="${[...this._classList].join(" ")}"`
+    : "";
   let string: string = "";
 
   if (elementHasChildren) {
     const children = this._children.map((child) => child.printTree()).join("");
-    // Print start and end tags to different lines.
+    // Print start and end tag to different lines.
     string = `${spaces}<${this.tagName}${classes}>\n${children}${spaces}</${this.tagName}>\n`;
   } else {
-    // Print the start and end tags to the same line.
+    // Print start and end tag to the same line.
     string = `${spaces}<${this.tagName}${classes}></${this.tagName}>\n`;
   }
   return string;
@@ -123,40 +134,19 @@ printTree = (): string => {
 
 ## Traversing the tree
 
-### Task
-Implement a method called `querySelector`, which takes an array of two selectors (tuple). The first selector is the parent element's selector. When you find the parent element (it has the first selector in the array), then it ithe parent element's subtree, continue travering the subtree to find the next element that has the second selector in the array. The method returns the first element that matches the selector.
+Implement
 
-Method signature:
+- `findFirstChildBFS`
+- `findFirstChildDFS`
+- `findDescendantBFS`
+- `findDescendantDFS`
 
-Note: find the immediate child.
+Check out `main.ts` for how to implement those methods.
 
-```ts
-querySelector: ([parentSelector, childSelector]: string[]) => MyElement | null;
-```
+## Queue
 
-Assume that we've built up this element hierarchy:
-```
- <html>
-   <body>
-      <div class="main-content">
-        <span></span>
-      </div>
-      <div class="main-content">
-        <span class="another-class some-other-content"></span> // 👍 This is the element we are looking for.
-        <p class="some-other-content">
-      </div>
-   </body>
- </html>
-```
-```ts
-html.querySelector(['main-content', 'some-other-content']).printTree()
-```
-The above method call should return `<span class="some-other-content"></span>`
+All BFS methods use queue data structure. In JavaScript queue is an array where we add items, one after another, and then remove them from the start of the array. It's called first-in-first-out (FIFO). You could think of it as a line of people waiting in the checkout line at the grocery store. The first person in line is the first person to be served.
 
+## Stack
 
-### Breath first search (BFS)
-
-We are going to use BFS to traverse the HTML tree. You can also implement a solution using Depth first search (DFS).
-
-1. We want to use queue (first in first out - FIFO) to keep track of the elements that we need to visit. We start by adding the root element (this) to the queue.
-2. Second thing that BFS always has is some kind of a loop. We are going to use while loop. While the queue is not empty (we still have elements to check), we want to keep looping. Inside the while loop we remove the first element of the queue
+All DFS methods use stack data structure. In JavaScript stack is an array where we add items one after another and then remove them from the end of the array. It's called last-in-first-out (LIFO). You could think of it as a stack of papers. The last paper you put on the stack is the first paper you take off the stack.

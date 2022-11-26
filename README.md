@@ -12,13 +12,13 @@ I have written some tests for the app in the `main.test.ts` file. To run jest te
 
 ## Task
 
-Design and implement a class that can represent a single HTML element and its children. The class should have the following methods:
+Design and implement a class that can represent a single HTML element and its children. The class should have the following methods for tree construction and pretty printing:
 
 - `addClass` - takes a class name and adds it to the element's list of classes
-- `printTree` - returns a string representation of the element and its children in HTML format
 - `appendChild` - takes an HTML element and adds it to the element's list of children
+- `printTree` - returns a string representation of the element and its children in HTML format
 
-Tree traversal methods:
+The class should also have the following methods for tree traversal:
 
 - `findFirstChildBFS` - a method that takes an array of two elements (tuple). The first element is a parent element selector to start searching the child selector. The second element is the child selector. If we find the first child element that has the selector, we return the child element. The BFS stands for breadth-first search. This simply defines the order we traverse the tree.
 - `findFirstChildDFS` - the same as the `findFirstChildBFS` method, but the DFS stands for depth-first search. We traverse the tree using a depth-first search algorithm. If you are not familiar with the difference between BFS and DFS, I have added two images below this section.

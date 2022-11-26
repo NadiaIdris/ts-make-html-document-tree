@@ -40,6 +40,8 @@ The following image shows the breath-first search
 
 # Implementation
 
+Let's walk through our thought process on the journey to solving this task.
+
 ## Data modeling
 
 The program that we write should produce the following output (which is a string):

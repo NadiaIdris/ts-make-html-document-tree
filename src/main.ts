@@ -62,10 +62,10 @@ class MyElement implements MyElementInterface {
       const children = this._children
         .map((child) => child.printTree())
         .join("");
-      // Print start and end tag to different lines.
+      // Print start and end tags to different lines.
       string = `${spaces}<${this.tagName}${classes}>\n${children}${spaces}</${this.tagName}>\n`;
     } else {
-      // Print start and end tag to the same line.
+      // Print the start and end tags to the same line.
       string = `${spaces}<${this.tagName}${classes}></${this.tagName}>\n`;
     }
     return string;

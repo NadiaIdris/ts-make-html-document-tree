@@ -22,19 +22,19 @@ Design and implement a class that can represent a single HTML element and its ch
 
 Tree traversal methods:
 
-- `findFirstChildBFS` - method which takes an array of two elements (tuple). The first element is a parent element selector to start searching the child selector from. The second element is the child selector. If we find the first child element that has the selector, we return the child element. The BFS stands for Breadth First Search. This simply defines the order we traverse the tree.
-- `findFirstChildDFS` - basically the same as the BFS method, but the DFS stands for Depth First Search. We traverse the tree using a depth first search algorithm. If you are not familiar with the difference between BFS and DFS, I have added two images below this section.
-- `findDescendantBFS` - this method also takes a tuple, except the first element is the ancestor selector and the second element is the descendant selector. We traverse the tree using a breadth first search algorithm. If we find the first descendant element that has the selector, we return the descendant element. We traverse the tree using BFS.
-- `findDescendantDFS` - same as above method, except we traverse the tree using DFS.
+- `findFirstChildBFS` - a method that takes an array of two elements (tuple). The first element is a parent element selector to start searching the child selector. The second element is the child selector. If we find the first child element that has the selector, we return the child element. The BFS stands for Breadth-first Search. This simply defines the order we traverse the tree.
+- `findFirstChildDFS` - the same as the BFS method, but the DFS stands for Depth-first Search. We traverse the tree using a depth-first search algorithm. If you are not familiar with the difference between BFS and DFS, I have added two images below this section.
+- `findDescendantBFS` - this method also takes a tuple, except the first element is the ancestor selector and the second element is the descendant selector. We traverse the tree using a breadth-first search algorithm. If we find the first descendant element that has the selector, we return the descendant element. We traverse the tree using BFS.
+- `findDescendantDFS` - same as the above method, except we traverse the tree using DFS.
 
 The difference between finding the first child vs finding a descendant element.
 
 ![](/readme-images/find-first-child-find-first-descendant.svg)
 
-Breath first search
+Breath-first search
 ![](/readme-images/breath-first-search.svg)
 
-Depth first search
+Depth-first search
 ![](/readme-images/depth-first-search.svg)
 
 ## Data modeling
@@ -85,7 +85,7 @@ Note: when using classes, one doesn't have to create an interface. I like to do 
 
 ## Create an element
 
-- Instantiate `MyElement` class using a constructor function: `new Element(element: string) => Element`
+- Instantiate the `MyElement` class using a constructor function: `new Element(element: string) => Element`
 
 ## Formatting the HTML tree
 
@@ -122,10 +122,10 @@ printTree = (): string => {
 
   if (elementHasChildren) {
     const children = this._children.map((child) => child.printTree()).join("");
-    // Print start and end tag to different lines.
+    // Print start and end tags to different lines.
     string = `${spaces}<${this.tagName}${classes}>\n${children}${spaces}</${this.tagName}>\n`;
   } else {
-    // Print start and end tag to the same line.
+    // Print the start and end tags to the same line.
     string = `${spaces}<${this.tagName}${classes}></${this.tagName}>\n`;
   }
   return string;
@@ -145,7 +145,7 @@ Check out `main.ts` for how to implement those methods.
 
 ## Queue
 
-All BFS methods use queue data structure. In JavaScript queue is an array where we add items, one after another, and then remove them from the start of the array. It's called first-in-first-out (FIFO). You could think of it as a line of people waiting in the checkout line at the grocery store. The first person in line is the first person to be served.
+All BFS methods use a queue data structure. In JavaScript queue is an array where we add items, one after another, and then remove them from the start of the array. It's called first-in-first-out (FIFO). You could think of it as a line of people waiting in the checkout line at the grocery store. The first person in line is the first person to be served.
 
 ## Stack
 

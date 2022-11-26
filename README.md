@@ -22,10 +22,10 @@ Design and implement a class that can represent a single HTML element and its ch
 
 Tree traversal methods:
 
-- `findFirstChildBFS` - a method that takes an array of two elements (tuple). The first element is a parent element selector to start searching the child selector. The second element is the child selector. If we find the first child element that has the selector, we return the child element. The BFS stands for Breadth-first Search. This simply defines the order we traverse the tree.
-- `findFirstChildDFS` - the same as the BFS method, but the DFS stands for Depth-first Search. We traverse the tree using a depth-first search algorithm. If you are not familiar with the difference between BFS and DFS, I have added two images below this section.
+- `findFirstChildBFS` - a method that takes an array of two elements (tuple). The first element is a parent element selector to start searching the child selector. The second element is the child selector. If we find the first child element that has the selector, we return the child element. The BFS stands for breadth-first search. This simply defines the order we traverse the tree.
+- `findFirstChildDFS` - the same as the `findFirstChildBFS` method, but the DFS stands for depth-first search. We traverse the tree using a depth-first search algorithm. If you are not familiar with the difference between BFS and DFS, I have added two images below this section.
 - `findDescendantBFS` - this method also takes a tuple, except the first element is the ancestor selector and the second element is the descendant selector. We traverse the tree using a breadth-first search algorithm. If we find the first descendant element that has the selector, we return the descendant element. We traverse the tree using BFS.
-- `findDescendantDFS` - same as the above method, except we traverse the tree using DFS.
+- `findDescendantDFS` - same as the `findDescendantBFS` method, except we traverse the tree using DFS.
 
 The difference between finding the first child vs finding a descendant element.
 

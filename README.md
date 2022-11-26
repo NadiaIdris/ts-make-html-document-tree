@@ -8,9 +8,7 @@
 
 ## Test
 
-Testing quickly: I have written some sample tests for the app at the bottom of the `main.ts` file. Just uncomment the tests you want to run.
-
-Testing with Jest: I have written some tests for the app in the `main.test.ts` file. To run jest tests continuously, run "npx jest --watchAll".
+I have written some tests for the app in the `main.test.ts` file. To run jest tests continuously, run "npx jest --watchAll".
 
 ## Task
 

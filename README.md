@@ -69,10 +69,16 @@ Data is all the pieces of information that we need to represent the element. For
 - Classes: each element can have one or more classes. We want to maintain the order of classes, so we can use an array as a container to store all the classes. Each class is a type string.
 - Children: each element can have one or more children. We want to maintain the insertion order of children, so we can use an array as a container to store all the children. Each child is an element, so we can use `MyElement` as a type.
 
-```ts
-<ul class="blue-theme bold-text"> // Tag name is "ul". It is an element with two classes and two child elements ("li")
-  <li>item 1</li> // <- child 1: "li" is an element and a child of "ul"
-  <li>item 2</li> // <- child 2 (same as the above)
+```html
+<ul class="blue-theme bold-text">
+  <!-- Tag name is "ul". It is an element -->
+  <!-- with two classes and two child elements ("li") -->
+  <li>item 1</li>
+  //
+  <!-- child 1: "li" is an element and a child of "ul" -->
+  <li>item 2</li>
+  //
+  <!-- child 2 (same as the above) -->
 </ul>
 ```
 
@@ -81,7 +87,9 @@ class MyElement implements MyElementInterface {
   tagName: string;
   private _children: MyElement[] = [];
   private _classList: string[] = [];
-  /** For formatting, we need a "depth" property. For each when adding a child to a parent, we need to increment the dept of the child by 1. This is how we will know how many spaces to add before the child element.*/
+  // For formatting, we need a "depth" property. For each when adding a child to a parent,
+  // we need to increment the dept of the child by 1. This is how we will know how many
+  // spaces to add before the child element.
   private _depth: number = 0;
 }
 ```
@@ -104,9 +112,11 @@ E.g. when we pretty print the HTML tree, each element will have depth \* 2 space
 
 ```ts
 appendChild = (child: MyElement) => {
-  // Increment the dept of the child by taking the current element's depth and adding 1 to it.
+  // Increment the dept of the child by taking the current
+  // element's depth and adding 1 to it.
   child.depth = this.depth + 1;
-  // We are also tracking the parent element of each element. This will help us to traverse to the root element.
+  // We are also tracking the parent element of each element.
+  // This will help us to traverse to the root element.
   child._parentElement = this;
   this._children.push(child);
   return this;
